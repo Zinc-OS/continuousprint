@@ -96,7 +96,8 @@ $(function() {
 								self.addToQueue({
 									name: $(this).data("name"),
 									path: $(this).data("path"),
-									sd: $(this).data("sd")
+									sd: $(this).data("sd"),
+                                    count: $(this).data("count")
 								});
 							});
 							$('#file_list').append(row);
