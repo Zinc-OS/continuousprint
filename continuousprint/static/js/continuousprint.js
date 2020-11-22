@@ -39,7 +39,7 @@ $(function() {
 							var file = r.queue[i];
 							var row;
 							if (file["time"] == undefined) {
-								var other = '<input type="text" class="input-block-level" placeholder="Search" />'+"<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+"'></i>&nbsp;";
+								var other = '<input type="text" id="print'+tostring(i)+'"'+' class="input-block-level" placeholder="Search" />'+"<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+"'></i>&nbsp;";
 								if (i == 0) other = "";
 								if (i == 1) other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp;";
 								row = $("<div style='padding: 10px;border-bottom: 1px solid #000;"+(i==0 ? "background: #f9f4c0;" : "")+"'>"+file.name+"<div class='pull-right'>" + other + "<i style='cursor: pointer' class='fa fa-minus text-error' data-index='"+i+"'>"+"</i></div></div>");
