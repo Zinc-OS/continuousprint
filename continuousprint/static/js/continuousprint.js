@@ -39,6 +39,7 @@ $(function() {
 							var file = r.queue[i];
 							var row;
 							if (file["time"] == undefined) {
+                                var other ="";
 								//var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
 								//if (i == 0) other = "";
 								//if (i == 1) other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
