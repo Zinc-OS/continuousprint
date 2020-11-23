@@ -39,10 +39,9 @@ $(function() {
 							var file = r.queue[i];
 							var row;
 							if (file["time"] == undefined) {
-                                var other ="";
-								//var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
-								//if (i == 0) other = "";
-								//if (i == 1) other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
+								var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
+								if (i == 0) other = "";
+								if (i == 1) other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+'<input type="text" id="print'+toString(i)+'"'+' class="input-block-level" placeholder="'+toString(file.count)+'"'+' />'+"'></i>&nbsp;";
 								row = $("<div style='padding: 10px;border-bottom: 1px solid #000;"+(i==0 ? "background: #f9f4c0;" : "")+"'>"+file.name+"<div class='pull-right'>" + other + "<i style='cursor: pointer' class='fa fa-minus text-error' data-index='"+i+"'></i>"+"</i></div></div>");
 								row.find(".fa-minus").click(function() {
 									self.removeFromQueue($(this).data("index"));
@@ -98,7 +97,7 @@ $(function() {
 									name: $(this).data("name"),
 									path: $(this).data("path"),
 									sd: $(this).data("sd"),
-                                    count: 1
+                                    count: "1"
 								});
 							});
 							$('#file_list').append(row);
