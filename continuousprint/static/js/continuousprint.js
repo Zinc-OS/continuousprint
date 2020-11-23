@@ -98,7 +98,7 @@ $(function() {
 									name: $(this).data("name"),
 									path: $(this).data("path"),
 									sd: $(this).data("sd"),
-                                    count: 1
+                                    count: "1"
 								});
 							});
 							$('#file_list').append(row);
