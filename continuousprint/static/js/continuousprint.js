@@ -190,7 +190,7 @@ $(function() {
                 //and change the html of the count-box and file name of to the temporary variable
                 var temp=$("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
                 var temp2=$("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
-                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text((temp2);
+                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp2);
                 $("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp);
   
             }
