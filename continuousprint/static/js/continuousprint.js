@@ -22,8 +22,9 @@ $(function() {
 			self.loadQueue();
 			self.is_paused(false);
             self.checkLooped();
+            
 		}
-
+        $(".entry machinecode").children(".btn-group").append('<div class="btn btn-mini enabled" data-bind="visible: $root.loginState.hasPermissionKo($root.access.permissions.PRINT), click: function() { if ($root.enableSelectAndPrint($data)) { $root.loadFile($data, true); } else { return; } }, css: {disabled: !$root.enableSelectAndPrint($data)}" title="Load and Print"><i class="fa fa-print"></i></div>');
 		self.loadQueue = function() {
             $('#queue_list').html("");
 			$.ajax({
