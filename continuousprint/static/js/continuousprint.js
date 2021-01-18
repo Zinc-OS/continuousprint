@@ -462,7 +462,7 @@ $(function() {
     */
     $(document).ready(function(){
 			let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
-			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }, visible: "true" title="Show Thumbnail" style="display: none;"><i class="Q">Q</i></div>';//Q for queue
+			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }, visible: true title="Show Thumbnail" style="display: none;"><i class="Q">Q</i></div>';//Q for queue
 			$("#files_template_machinecode").text(function () {
 				var return_value =  $(this).text();
 				return_value = return_value.replace(regex, '<div class="btn-group action-buttons">$1	' + template + '></div>');
