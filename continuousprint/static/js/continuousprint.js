@@ -479,10 +479,10 @@ $(function() {
 			//let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
 			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Add to continuous print queue"><i class="fa">Q</i></div>';
 
-			$("#files_template_machinecode").text(function () {
-				$(this).text().append(template);
+			
+				$("#files_template_machinecode").text().append(template);
 				
-			});
+			
 		});
 	}
     /**/
