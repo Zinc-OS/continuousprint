@@ -338,7 +338,6 @@ class ContinuousprintPlugin(octoprint.plugin.SettingsPlugin,
 		)
 
 
-	##~~ Softwareupdate hook
 	def get_update_information(self):
 		# Define the configuration for your plugin to use with the Software Update
 		# Plugin here. See https://docs.octoprint.org/en/master/bundledplugins/softwareupdate.html
@@ -353,7 +352,16 @@ class ContinuousprintPlugin(octoprint.plugin.SettingsPlugin,
 				user="Zinc-OS",
 				repo="continuousprint",
 				current=self._plugin_version,
-
+				stable_branch=dict(
+				    name="Stable", branch="master", comittish=["master"]
+				),
+				prerelease_branches=[
+				    dict(
+					name="Release Candidate",
+					branch="dev-rc",
+					comittish=["dev-rc", "master"],
+				    )
+				],
 				# update method: pip
 				pip="https://github.com/Zinc-OS/continuousprint/archive/{target_version}.zip"
 			)
