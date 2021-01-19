@@ -476,13 +476,12 @@ $(function() {
     #https://github.com/jneilliii/OctoPrint-PrusaSlicerThumbnails/blob/master/octoprint_prusaslicerthumbnails/static/js/prusaslicerthumbnails.js
     */
     $(document).ready(function(){
-			let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
+			//let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
 			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Add to continuous print queue"><i class="fa">Q</i></div>';
 
 			$("#files_template_machinecode").text(function () {
-				var return_value=$(this).text();
-				return_value = return_value+template;
-				return return_value
+				$(this).text().append(template);
+				
 			});
 		});
 	}
