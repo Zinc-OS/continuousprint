@@ -25,7 +25,16 @@ $(function() {
             
 		}
         self.files.addtoqueue = function(data) {
-				self.addToQueue(data);
+            var Sd="false";
+            if(data.origin="sdcard"){
+                Sd="true";
+            }
+				self.addToQueue({
+									name: data.name,
+									path: data.path,
+									sd: Sd,
+                                    count: 1
+								});
                 
 			
 		}
