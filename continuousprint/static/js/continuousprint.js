@@ -25,9 +25,9 @@ $(function() {
             
 		}
         self.files.addtoqueue = function(data) {
-            var Sd="false";
+            var Sd=false;
             if(data.origin="sdcard"){
-                Sd="true";
+                Sd=true;
             }
 				self.addToQueue({
 									name: data.name,
