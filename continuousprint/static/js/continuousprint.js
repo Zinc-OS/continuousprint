@@ -470,7 +470,7 @@ $(function() {
 				});
 			}
 		}
-	}
+	
     /*
     #Adapted from OctoPrint-PrusaSlicerThumbnails
     #https://github.com/jneilliii/OctoPrint-PrusaSlicerThumbnails/blob/master/octoprint_prusaslicerthumbnails/static/js/prusaslicerthumbnails.js
