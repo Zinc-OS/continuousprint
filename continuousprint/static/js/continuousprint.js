@@ -33,7 +33,7 @@ $(function() {
             self.addToQueue({
                 name:data.name,
                 path:data.path,
-                sd:Sd,
+                sd:sd,
                 count:1
                 
             });
