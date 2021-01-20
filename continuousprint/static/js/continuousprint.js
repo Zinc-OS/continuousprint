@@ -477,7 +477,7 @@ $(function() {
     */
     $(document).ready(function(){
 			let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
-			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Addtoqueue" ><i class="fa fa-imag"><Q/i></div>';
+			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Addtoqueue" ><i></i>{{ _("Q") }}</div>';
 
 			$("#files_template_machinecode").text(function () {
 				var return_value = $(this).text();
