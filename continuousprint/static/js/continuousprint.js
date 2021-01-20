@@ -477,13 +477,7 @@ $(function() {
     */
     $(document).ready(function(){
 			let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
-			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Addtoqueue" style="display: none;"><i class="fa fa-image"></i></div>';
-			let inline_thumbnail_template = '<div class="row-fluid inline_prusa_thumbnail" ' +
-			                                'data-bind="if: ($data.thumbnail_src == \'prusaslicerthumbnails\' && $root.settingsViewModel.settings.plugins.prusaslicerthumbnails.inline_thumbnail() == true), style: {\'text-align\': $root.thumbnailAlignValue}">' +
-			                                '<img data-bind="attr: {src: $data.thumbnail, width: $root.thumbnailScaleValue}, ' +
-			                                'visible: ($data.thumbnail_src == \'prusaslicerthumbnails\' && $root.settingsViewModel.settings.plugins.prusaslicerthumbnails.inline_thumbnail() == true), ' +
-			                                'click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" ' +
-			                                'style="display: none;"/></div>'
+			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Addtoqueue" ><i class="fa fa-imag"><Q/i></div>';
 
 			$("#files_template_machinecode").text(function () {
 				var return_value = $(this).text();
