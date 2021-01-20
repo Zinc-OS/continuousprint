@@ -25,11 +25,11 @@ $(function() {
             
 		}
         self.files.addtoqueue = function(data) {
-            var Sd="true";
+            var sd="true";
             if(data.origin="local"){
-                Sd="false";
+                sd="false";
             }
-            data.sd=Sd;
+            data.sd=sd;
             self.addToQueue({
                 name:data.name,
                 path:data.path,
