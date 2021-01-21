@@ -74,6 +74,17 @@ $(function() {
                                     var ncount= parseInt(this.value);
                                     self.changecount($(this).data("index"),ncount);                                
                             });
+                            row.find(".fa-text").keydown(function() {
+                                    if (event.keyCode === 13){
+                                        blip = true;
+                                    }else{blip = false}
+                                });
+                            row.find(".fa-text").keyup(function() {
+                                if (blip){
+                                    var ncount= parseInt(this.value);
+                                    self.changecount($(this).data("index"),ncount);
+                                }
+                            });
                              $('#queue_list').append(row);
                         }
                        
@@ -114,7 +125,7 @@ $(function() {
                                     suffix = " days";
                                 }
                             }
-                            row = $("<div style='padding: 15px; border-bottom: 1px solid #000;background:#c2fccf'><div class='queue-row-container'><div class='queue-inner-row-container'>Complete: <p class='file-name' >"+file.name+" "+file.title+"</p></div><div class='end-bundle'>Times run: "+file.times_run+" Average Time: "+time.toFixed()+suffix+"</div></div></div");
+						    row = $("<div style='padding: 10px; border-bottom: 1px solid #000;background:#c2fccf'>Complete: "+ file.name+ " <div class='pull-right'>took: " + time.toFixed(0) + suffix + "</div></div>")
                        
                             $('#print_history').append(row);
                         }
@@ -146,7 +157,18 @@ $(function() {
                             var ncount = parseInt(this.value);
                             self.changecount($(this).data("index"),ncount);
                     });
-                
+                    row.find(".fa-text").keydown(function() {
+                                    if (event.keyCode === 13){
+                                        blip = true;
+                                    }else{blip = false}
+                                });
+                    row.find(".fa-text").keyup(function() {
+                        if (blip){
+                            var ncount= parseInt(this.value);
+                            self.changecount($(this).data("index"),ncount);
+                        }
+                    });
+
                 $('#queue_list').append(row);
                     self.itemsInQueue+=1;
                 
