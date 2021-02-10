@@ -9,7 +9,6 @@ $(function() {
 	function ContinuousPrintViewModel(parameters) {
 		var self = this;
 		self.params = parameters;
-        
 		self.printerState = parameters[0];
 		self.loginState = parameters[1];
 		self.files = parameters[2];
@@ -17,15 +16,16 @@ $(function() {
 		self.is_paused = ko.observable();
         self.is_looped = ko.observable();
         self.ncount=1;
+        self.itemsInQueue=0;
+        
 		self.onBeforeBinding = function() {
 			self.loadQueue();
 			self.is_paused(false);
-            self.is_looped(false);
+            self.checkLooped();
 		}
-		
-		
+
 		self.loadQueue = function() {
-			$('#queue_list').html("");
+            $('#queue_list').html("");
 			$.ajax({
 				url: "plugin/continuousprint/queue",
 				type: "GET",
@@ -34,60 +34,204 @@ $(function() {
 					"X-Api-Key":UI_API_KEY,
 				},
 				success:function(r){
+                    self.itemsInQueue=r.queue.length;
 					if (r.queue.length > 0) {
 						$('#queue_list').html("");
 						for(var i = 0; i < r.queue.length; i++) {
 							var file = r.queue[i];
 							var row;
-                            var blip = false;
-							if (file["time"] == undefined) {
-								var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+"'></i>&nbsp;";
-								if (i == 0) other = "";
-								if (i == 1) other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp;";
-								row = $("<div style='padding: 10px;border-bottom: 1px solid #000;"+(i==0 ? "background: #f9f4c0;" : "")+"'>"+file.name+"<input class='fa fa-text' type = 'text' data-index='"+i+"' value='"+file.count.toString()+"'/><div class='pull-right'>" + other + "<i style='cursor: pointer' class='fa fa-minus text-error' data-index='"+i+"'></i></div></div>");
-								row.find(".fa-minus").click(function() {
-									self.removeFromQueue($(this).data("index"));
-								});
-								row.find(".fa-chevron-up").click(function() {
-									self.moveUp($(this).data("index"));
-								});
-								row.find(".fa-chevron-down").click(function() {
-									self.moveDown($(this).data("index"));
-								});
-                                row.find(".fa-text").keydown(function() {
+
+                            var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+i+"'></i>&nbsp;";
+                            if (i == 0) {other = "";}
+                            if (i == 1) {other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+i+"'></i>&nbsp;";}
+                            row = $("<div class='n"+i+"'style='padding: 10px;border-bottom: 1px solid #000;"+(i==0 ? "background: #f9f4c0;" : "")+"'><div class='queue-row-container'><div class='queue-inner-row-container'><input class='fa fa-text count-box' type = 'text' data-index='"+i+"' value='" + file.count + "'/><p class='file-name' > " + file.name + "</p></div><div>" + other + "<i style='cursor: pointer' class='fa fa-minus text-error' data-index='"+i+"'></i></div></div></div>");
+                            row.find(".fa-minus").click(function() {
+                                self.removeFromQueue($(this).data("index"));
+                            });
+                            row.find(".fa-chevron-up").click(function() {
+                                self.moveUp($(this).data("index"));
+                            });
+                            row.find(".fa-chevron-down").click(function() {
+                                self.moveDown($(this).data("index"));
+                            });
+                            row.find(".fa-text").focusout(function() {
+                                    var ncount= parseInt(this.value);
+                                    self.changecount($(this).data("index"),ncount);                                
+                            });
+                            row.find(".fa-text").keydown(function() {
                                     if (event.keyCode === 13){
                                         blip = true;
                                     }else{blip = false}
                                 });
-                                row.find(".fa-text").keyup(function() {
-                                    if (blip){
-                                        var ncount= parseInt(this.value);
-                                        self.changecount($(this).data("index"),ncount);
-                                    }
-                                });
-							} else {
-								var time = file.time / 60;
-								var suffix = " mins";
-								if (time > 60) {
-									time = time / 60;
-									suffix = " hours";
-									if (time > 24) {
-										time = time / 24;
-										suffix = " days";
-									}
-								}
+                            row.find(".fa-text").keyup(function() {
+                                if (blip){
+                                    var ncount= parseInt(this.value);
+                                    self.changecount($(this).data("index"),ncount);
+                                }
+                            });
+                             $('#queue_list').append(row);
+                        }
+                       
+                        self.loadPrintHistory("full");
+                    }else{
+                        self.loadPrintHistory("empty");
+                    }
+                }
+							 
 								
-								row = $("<div style='padding: 10px; border-bottom: 1px solid #000;background:#c2fccf'>Complete: "+ file.name+ " <div class='pull-right'>took: " + time.toFixed(0) + suffix + "</div></div>")
-							}
-							$('#queue_list').append(row);
-						}
-					} else {
-						$('#queue_list').html("<div style='text-align: center'>Queue is empty</div>");
-					}
-				}
+				
 			});
-		};
-			
+                
+		};    
+                        
+            self.loadPrintHistory = function(items){
+                $('#print_history').html("");
+                $.ajax({
+				url: "plugin/continuousprint/print_history",
+				type: "GET",
+				dataType: "json",
+				headers: {
+					"X-Api-Key":UI_API_KEY,
+				},
+				success:function(r){
+					if (r.queue.length > 0) {
+						$('#print_history').html("");
+						for(var i = 0; i < r.queue.length; i++) {
+                            var file=r.queue[i];
+                            var row;
+                            var time = file.time / 60;
+                            var suffix = " mins";
+                            if (time > 60) {
+                                time = time / 60;
+                                suffix = " hours";
+                                if (time > 24) {
+                                    time = time / 24;
+                                    suffix = " days";
+                                }
+                            }
+                            row = $("<div style='padding: 15px; border-bottom: 1px solid #000;background:#c2fccf'><div class='queue-row-container'><div class='queue-inner-row-container'>Complete: <p class='file-name' >"+file.name+" "+file.title+"</p></div><div class='end-bundle'>Times run: "+file.times_run+" Average Time: "+time.toFixed()+suffix+"</div></div></div");
+                       
+                            $('#print_history').append(row);
+                        }
+                    
+                                } else if(items=="empty"){
+                                    $('#queue_list').html("<div style='text-align: center'>Queue is empty</div>");
+                                }
+                       }
+                   });
+            }
+            self.reloadQueue = function(data,CMD) {
+                if(CMD=="ADD"){
+                    var file = data;
+                    var row;
+                    var other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+self.itemsInQueue+"'></i>&nbsp; <i style='cursor: pointer' class='fa fa-chevron-up' data-index='"+self.itemsInQueue+"'></i>&nbsp;";
+                    if (self.itemsInQueue == 0) {other = "";$('#queue_list').html("");}
+                    if (self.itemsInQueue == 1) {other = "<i style='cursor: pointer' class='fa fa-chevron-down' data-index='"+self.itemsInQueue+"'></i>&nbsp;";}
+                    row = $("<div class='n" + self.itemsInQueue + "' style='padding: 10px;border-bottom: 1px solid #000;"+(self.itemsInQueue==0 ? "background: #f9f4c0;" : "")+"'><div class='queue-row-container'><div class='queue-inner-row-container'><input class='fa fa-text count-box' type = 'text' data-index='"+self.itemsInQueue+"' value='" + 1 + "'/><p class='file-name' > " + file.name + "</p></div><div>" + other + "<i style='cursor: pointer' class='fa fa-minus text-error' data-index='"+self.itemsInQueue+"'></i></div></div></div>");
+                    row.find(".fa-minus").click(function() {
+                        self.removeFromQueue($(this).data("index"));
+                    });
+                    row.find(".fa-chevron-up").click(function() {
+                        self.moveUp($(this).data("index"));
+                    });
+                    row.find(".fa-chevron-down").click(function() {
+                        self.moveDown($(this).data("index"));
+                    });
+                    row.find(".fa-text").focusout(function() {
+                            var ncount = parseInt(this.value);
+                            self.changecount($(this).data("index"),ncount);
+                    });
+                    row.find(".fa-text").keydown(function() {
+                                    if (event.keyCode === 13){
+                                        blip = true;
+                                    }else{blip = false}
+                                });
+                    row.find(".fa-text").keyup(function() {
+                        if (blip){
+                            var ncount= parseInt(this.value);
+                            self.changecount($(this).data("index"),ncount);
+                        }
+                    });
+
+                $('#queue_list').append(row);
+                    self.itemsInQueue+=1;
+                
+            }
+            if(CMD=="SUB"){
+                $("#queue_list").children(".n"+data).remove();
+                for(var i=data+1;i<self.itemsInQueue;i++){
+                    $("#queue_list").children(".n"+i).children(".queue-row-container").children(".queue-innner-row-container").children(".count-box").attr("data-index",(i-1).toString());
+                    $("#queue_list").children(".n"+i).children(".queue-row-container").find(".fa-minus").attr("data-index",(i-1).toString());
+                    if(i>1){
+                        $("#queue_list").children(".n"+i).children(".queue-row-container").find(".fa-chevron-down").attr("data-index",(i-1).toString());
+                        if(i==2){
+                            $("#queue_list").children(".n"+i).children(".queue-row-container").find(".fa-chevron-up").remove();
+                        }
+                        if(i>2){
+                            $("#queue_list").children(".n"+i).children(".queue-row-container").find(".fa-chevron-up").attr("data-index",(i-1).toString());
+                        }
+                    }
+                    if(i==1){
+                        $("#queue_list").children(".n"+i).css("background","#f9f4c0");
+                        $("#queue_list").children(".n"+i).children(".queue-row-container").find(".fa-chevron-down").remove();
+                    }
+                    $("#queue_list").children(".n"+i).addClass("n"+(i-1).toString());
+                    $("#queue_list").children(".n"+i).removeClass("n"+i.toString());
+                }
+                self.itemsInQueue-=1;
+                if(self.itemsInQueue==0){
+                    $('#queue_list').html("<div style='text-align: center'>Queue is empty</div>");
+                }
+            }
+            if(CMD=="UP"){
+                //simple
+                //first, we switch the data-indexes of the count-boxes of the rows to be switched
+                //then, we copy the html of the count boxes and the html(nothing else) to a temporary variable of the row to be moved
+                //We then change the html of the count-box and file name of that row to the file name and count-box of that above it,
+                //and change the html of the count-box and file name of to the temporary variable
+                var temp3 = $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val();
+                var temp4 = $("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val();
+                var temp=$("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
+                var temp2=$("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
+                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp2);
+                $("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp);
+                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val(parseInt(temp4));
+                $("#queue_list").children(".n"+(data-1)).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val(parseInt(temp3));
+  
+            }
+            if(CMD=="DOWN"){
+                var temp3 = $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val();
+                var temp4 = $("#queue_list").children(".n"+(data+1)).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val();
+                var temp=$("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
+                var temp2=$("#queue_list").children(".n"+(data+1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text();
+                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp2);
+                $("#queue_list").children(".n"+(data+1)).children(".queue-row-container").children(".queue-inner-row-container").children(".file-name").text(temp); 
+                $("#queue_list").children(".n"+data).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val(parseInt(temp4));
+                $("#queue_list").children(".n"+(data+1)).children(".queue-row-container").children(".queue-inner-row-container").children(".count-box").val(parseInt(temp3));
+            }
+             
+             
+        }
+
+                
+                        
+
+                      
+	    self.checkLooped = function(){
+            $.ajax({
+				url: "plugin/continuousprint/looped",
+				type: "GET",
+				dataType: "text",
+				headers: {"X-Api-Key":UI_API_KEY},
+				success: function(c) {
+					if(c=="true"){
+                        self.is_looped(true);
+                    } else{
+                        self.is_looped(false);
+                    }
+				},
+			});
+        }
 		self.getFileList = function() {
 			$('#file_list').html("");
 			$.ajax({
@@ -125,7 +269,7 @@ $(function() {
 
 		$(document).ready(function(){
 			self.getFileList();
-			
+			self.checkLooped();
 			$("#gcode_search").keyup(function() {
 				var criteria = this.value.toLowerCase();
 				$("#file_list > div").each(function(){
@@ -156,6 +300,7 @@ $(function() {
 		}
 
 		self.addToQueue = function(data) {
+            self.reloadQueue(data,"ADD");
 			$.ajax({
 				url: "plugin/continuousprint/addqueue",
 				type: "POST",
@@ -165,7 +310,7 @@ $(function() {
 				},
 				data: data,
 				success: function(c) {
-					self.loadQueue();
+					
 				},
 				error: function() {
 					self.loadQueue();
@@ -174,13 +319,13 @@ $(function() {
 		}
 		
 		self.moveUp = function(data) {
+            self.reloadQueue(data,"UP");
 			$.ajax({
 				url: "plugin/continuousprint/queueup?index=" + data,
 				type: "GET",
 				dataType: "json",
 				headers: {"X-Api-Key":UI_API_KEY},
 				success: function(c) {
-					self.loadQueue();
 				},
 				error: function() {
 					self.loadQueue();
@@ -203,13 +348,13 @@ $(function() {
         }
 		
 		self.moveDown = function(data) {
+            self.reloadQueue(data,"DOWN");
 			$.ajax({
 				url: "plugin/continuousprint/queuedown?index=" + data,
 				type: "GET",
 				dataType: "json",
 				headers: {"X-Api-Key":UI_API_KEY},
 				success: function(c) {
-					self.loadQueue();
 				},
 				error: function() {
 					self.loadQueue();
@@ -218,6 +363,7 @@ $(function() {
 		}
 		
 		self.removeFromQueue = function(data) {
+            self.reloadQueue(data,"SUB");
 			$.ajax({
 				url: "plugin/continuousprint/removequeue?index=" + data,
 				type: "DELETE",
@@ -226,7 +372,7 @@ $(function() {
 					"X-Api-Key":UI_API_KEY,
 				},
 				success: function(c) {
-					self.loadQueue();
+					//self.loadQueue();
 				},
 				error: function() {
 					self.loadQueue();
