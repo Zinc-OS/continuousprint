@@ -19,7 +19,7 @@
   
 }
 #tab_plugin_continuousprint .count-box{
-  dmin-width:30px;
+  min-width:30px;
   max-width: 30px; 
   max-height:8px;
   
