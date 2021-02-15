@@ -495,7 +495,7 @@ $(function() {
     */
     $(document).ready(function(){
 			let regex = /<div class="btn-group action-buttons">([\s\S]*)<.div>/mi;
-			let template = '<div class="btn btn-mini" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Add To Queue" ><i class="bold"></i>Q</div>';
+			let template = '<div class="btn btn-mini bold" data-bind="click: function() { if ($root.loginState.isUser()) { $root.addtoqueue($data) } else { return; } }" title="Add To Queue" ><i></i>Q</div>';
 
 			$("#files_template_machinecode").text(function () {
 				var return_value = $(this).text();
